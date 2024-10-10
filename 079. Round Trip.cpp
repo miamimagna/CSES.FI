@@ -12,8 +12,11 @@ using v = vector<T>;
 #define sz size()
 #define int long long
 int mod = 1e9 + 7;
+// here possible denotes existence of solution and conti will tell us when to stop adding nodes to answer
 bool possible = false, conti = true;
 v<int> ans;
+// in most simple terms we need to detect a cycle of 3 or more nodes, we can do that using a depth array that will store the depth at which a node was found
+// finally when something is encountered again, we will check if it's depth is more than 2, if yes we will backtrach answer
 void dfs(int i, v<v<int>>& adj, v<int> &depth){
     for(int x: adj[i]){
         if(possible) break;
