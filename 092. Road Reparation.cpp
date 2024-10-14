@@ -19,6 +19,59 @@ using minheap = priority_queue<t, v<t>, greater<t>>;
 #define eb emplace_back 
 #define int long long
 int mod = 1e9 + 7;
+/*
+this is kruskal's algorithm solution for the sake of completion
+class DSU
+{
+    v<int> parent, size;
+
+public:
+    DSU(int n) : parent(n), size(n, 1)
+    {
+        for (int i = 0; i < n; i++)
+            parent[i] = i;
+    }
+    int find(int u)
+    {
+        return parent[u] == u ? u : parent[u] = find(parent[u]);
+    }
+    void unions(int u, int v)
+    {
+        u = find(u), v = find(v);
+        if (u != v)
+        {
+            if (size[u] < size[v])
+                swap(u, v);
+            parent[v] = u;
+            size[u] += size[v];
+        }
+    }
+};
+void solve(){
+    int n, m;
+    cin >> n >> m;
+    v<tuple<int, int, int>> edges;
+    while(m --){
+        int from, to, cost;
+        cin>>from >> to >> cost;
+        edges.eb(cost, from, to);
+        edges.eb(cost, to, from);
+    }
+    sort(edges.begin(), edges.end());
+    DSU dsu(n + 1);
+    int ans = 0;
+    for(auto &[cost, from, to]: edges)
+        if(dsu.find(from) != dsu.find(to))
+            ans += cost, dsu.unions(from, to);
+    bool possible = true;
+    for(int i = 2; i <= n; i++)
+        if(dsu.find(i) != dsu.find(i - 1))
+            possible = false;
+    if(possible) cout << ans << endl;
+    else cout << "IMPOSSIBLE" << endl;
+}
+*/
+// this is prim's algorithm solution
 void solve(){
     int n, m;
     cin >> n >> m;
