@@ -1,0 +1,61 @@
+#include <cstdio>
+#include <iostream>
+#include <vector>
+#include <utility>
+#include <queue>
+#include <algorithm>
+#include <set>
+using namespace std;
+// preprocessing to make code easier 
+template <typename T> 
+using v = vector<T>; 
+template <typename t>
+using maxheap = priority_queue<t>;
+template<typename t>
+using minheap = priority_queue<t, v<t>, greater<t>>;
+#define heap(T, comp) priority_queue<T, v<T>, comp> 
+#define sz size() 
+#define pb push_back 
+#define eb emplace_back 
+#define int long long
+int mod = 1e9 + 7;
+void solve(){
+    int n, m;
+    cin >> n >> m;
+    v<v<pair<int, int>>> adj(n + 1);
+    while(m--){
+        int from, to, cost;
+        cin >> from >> to >> cost;
+        adj[from].eb(to, cost);
+        adj[to].eb(from, cost);
+    }
+    v<bool> vis(n + 1);
+    minheap<tuple<int, int, int>> q;
+    #define push emplace
+    int ans = 0;
+    vis[0] = vis[1] = 1;
+    for(auto [next, cost]: adj[1])
+        q.push(cost, 1, next);
+    while(q.sz){
+        auto [cost, from, to] = q.top(); q.pop();
+        if(vis[to]) continue;
+        vis[to] = 1;
+        // to get edge we can do edges.eb(from, to, cost)
+        ans += cost;
+        for(auto [next, cost]: adj[to])
+            q.push(cost, to, next);
+    }
+    #undef push
+    int sum = 0;
+    for(int x: vis) sum += x;
+    if(sum == n + 1)
+        cout << ans << endl;
+    else cout << "IMPOSSIBLE" << endl;
+}
+signed main()
+{
+#ifdef LOCAL
+    freopen("input.txt", "r", stdin);
+#endif
+    solve();
+}
