@@ -14,6 +14,65 @@ using v = vector<T>;
 #define eb emplace_back 
 #define int long long
 int mod = 1e9 + 7;
+/*
+another solution is based on Graph Coloring algorithm
+int cyclestart = -1, cycleend = -1;
+// we will have parent array to backtrack solution
+bool dfs(int node, v<v<int>>& adj, v<int>& color, v<int>& parent){
+// color a graph as potential at first
+    color[node] = 1;
+    // traverse graph while coloring it
+    for(int next: adj[node]){
+    // if uncolored edge, just continue
+        if(!color[next]){
+            parent[next] = node;
+            if(dfs(next, adj, color, parent))
+                return true;
+        }
+        // if colored edge, then it's a cycle right there mark start and end
+        if(color[next] == 1){
+            parent[next] = -1;
+            cyclestart = node;
+            cycleend = next;
+            return true;
+        }
+    }
+    // if nothing found we should mark edge black
+    color[node] = 2;
+    return false;
+}
+void solve(){
+    int n, m;
+    cin >> n >> m;
+    v<v<int>> adj(n + 1);
+    while(m--){
+        int a, b;
+        cin >> a >> b;
+        adj[a].pb(b);
+    }
+    v<int> color(n + 1), parent(n + 1, -1);
+    bool found = 0;
+    for(int i = 1; i <= n; i++)
+        if(!color[i] && dfs(i, adj, color, parent)){
+            found = 1;
+            break;
+        }
+    if(found){
+        int cur = cyclestart;
+        v<int> ans{cur};
+        while(cur != cycleend){
+            cur = parent[cur];
+            ans.push_back(cur);
+        }
+        ans.push_back(ans.front());
+        reverse(ans.begin(), ans.end());
+        cout << ans.sz << endl;
+        for(auto x: ans) cout << x << ' '; 
+        cout << endl;
+    }
+    else cout << "IMPOSSIBLE" << endl;
+}
+*/
 // cur will contain current dfs nodes and ans will contain answer
 v<int> cur, ans;
 // dfs on reverse of adjacency list
