@@ -4,7 +4,7 @@
 #include <cstdio>
 using namespace std;
 #define int long long
-class SegTreeMaxSum
+class SegTreeMaxSum 
 {
     struct Node
     {
