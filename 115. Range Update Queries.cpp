@@ -3,6 +3,42 @@
 #include <cstdio>
 using namespace std;
 #define int long long
+// we have used segment tree in this question, but you can simply use fenwick tree as well
+// just for the sake of completion, here is the fenwick version
+class Fenwick
+{
+    vector<int> b1, b2;
+    int n;
+    int sum(vector<int> &a, int i)
+    {
+        int res = 0;
+        for (; i >= 0; i = (i & (i + 1)) - 1)
+            res += a[i];
+        return res;
+    }
+    void update(vector<int> &a, int i, int delta)
+    {
+        for (; i < n; i = (i | (i + 1)))
+            a[i] += delta;
+    }
+
+public:
+    Fenwick(int nn) : b1(nn), b2(nn), n(nn) {}
+    Fenwick(vector<int> &arr) : Fenwick((int)arr.size())
+    {
+        for (int i = 0; i < n; i++)
+            update(i, i, arr[i]);
+    }
+    int sum(int i)
+    {
+        return sum(b1, i);
+    }
+    void update(int l, int r, int delta)
+    {
+        update(b1, l, delta);
+        update(b1, r + 1, -delta);
+    }
+};
 class Segment
 {
     vector<int> a;
