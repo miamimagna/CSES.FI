@@ -290,3 +290,92 @@ public:
 };
 
 */
+/*
+tarjan's algo is another alternate
+#include <cmath>
+#include <iostream>
+#include <cstdio>
+#include <algorithm>
+#include <vector>
+#include <unordered_map>
+#include <string>
+#include <sstream>
+#include <set>
+#include <unordered_set>
+using namespace std;
+// preprocessing to make code easier
+// #define int long long
+template <typename T>
+using v = vector<T>;
+// tarjan's algorithm
+class DSU
+{
+    vector<int> parent, size;
+ 
+public:
+    DSU(int n) : parent(n), size(n, 1)
+    {
+        for (int i = 0; i < n; i++)
+            parent[i] = i;
+    }
+    int find(int u)
+    {
+        // path compression
+        return parent[u] == u ? u : parent[u] = find(parent[u]);
+    }
+    void unions(int u, int v)
+    {
+        // union by size
+        u = find(u), v = find(v);
+        if (u == v)
+            return;
+        if (size[u] < size[v])
+            swap(u, v);
+        parent[v] = u;
+        size[u] += size[v];
+    }
+};
+void dfs(int i, int p, v<v<int>> &adj, v<v<pair<int, int>>> &queries, v<int> &ans, v<int> &visited, v<int> &real_ancestor, DSU &ancestors)
+{
+    visited[i] = 1;
+    for (auto [j, idx] : queries[i])
+        if (visited[j] == 1)
+            ans[idx] = j;
+        else if (visited[j] == 2)
+            ans[idx] = real_ancestor[ancestors.find(j)];
+    for (int child : adj[i])
+        if (child != p)
+        {
+            dfs(child, i, adj, queries, ans, visited, real_ancestor, ancestors);
+            ancestors.unions(i, child);
+            real_ancestor[ancestors.find(child)] = i;
+        }
+    visited[i] = 2;
+}
+signed main()
+{
+#ifdef LOCAL
+    freopen("input.txt", "r", stdin);
+#endif
+    ios::sync_with_stdio(0), cin.tie(0), cout.tie(0);
+    int n, q;
+    cin >> n >> q;
+    v<v<int>> adj(n + 1);
+    for (int i = 2, x; i <= n; i++)
+        cin >> x, adj[x].push_back(i);
+    v<int> ans(q), visited(n + 1), real_ancestor(n + 1);
+    DSU ancestors(n + 1);
+    v<v<pair<int, int>>> queries(n + 1);
+    for (int i = 0; i < q; i++)
+    {
+        int a, b;
+        cin >> a >> b;
+        queries[a].push_back({b, i});
+        if (a != b)
+            queries[b].push_back({a, i});
+    }
+    dfs(1, 0, adj, queries, ans, visited, real_ancestor, ancestors);
+    for (auto x : ans)
+        cout << x << endl;
+}
+*/
