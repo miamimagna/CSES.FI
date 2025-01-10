@@ -266,11 +266,16 @@ signed main()
     int n, q;
     cin >> n >> q;
     v<v<int>> adj(n + 1);
+    // sz will contain size of every heavy component
     v<int> values(n + 1), sz(n + 1, 1);
+    // dsu will have all the heavy component
     DSU heavy(n + 1);
+    // top_dsu will have highest node of a heavy path, parent is straightforward
+    // depth of a node will be used later on!
     v<int> top_dsu(n + 1), depth(n + 1), parent(n + 1);
     for (int i = 1; i <= n; i++)
         cin >> values[i], top_dsu[i] = i;
+    // make adjacency list
     for (int i = 1; i < n; i++)
     {
         int x, y;
@@ -278,23 +283,31 @@ signed main()
         adj[x].push_back(y);
         adj[y].push_back(x);
     }
+    // create lca data structure
     LCA lc(adj, 1);
+    // dfs to initialize sz, heavy, top_dsu, depth and parent
     dfs(1, 0, adj, sz, heavy, top_dsu, depth, parent);
+    // this will store all the heavy path as a segment tree of values
+    // index of any node in a heavy path is depth of topmost node - depth of current node
     unordered_map<int, SegTreeRecur> heavyseg;
     // for any node, index would be depth[i] - depth[top_dsu[i]]
     for (int i = 0; i <= n; i++)
     {
         int root = heavy.find(i);
+        // if light component skip
         if (heavy.getsize(root) == 1)
             continue;
+        // if segtree not initialized, initialize it
         if (!heavyseg.count(root))
             heavyseg[root] = SegTreeRecur(heavy.getsize(root));
+        // insert value
         heavyseg[root].replace(depth[i] - depth[top_dsu[root]], values[i]);
     }
     while (q--)
     {
         int type;
         cin >> type;
+        // get max
         if (type == 2)
         {
             int a, b;
@@ -307,10 +320,13 @@ signed main()
             {
                 int root = heavy.find(a);
                 int sz = heavy.getsize(root);
+                // if light component, do normally
                 if (sz == 1)
                     mxa = max(mxa, values[a]), a = parent[a];
+                // in case of heavy segtree either lca and root will be on same heavy component, then we do seg.sum(l, r)
                 else if (rootlca == root)
                     mxa = max(mxa, heavyseg[root].sum(-depth[top_dsu[root]] + depth[lca], -depth[top_dsu[root]] + depth[a])), a = lca;
+                // else it will be out of heavy component, we just take seg(0, r) and go to topmost element's parent
                 else
                     mxa = max(mxa, heavyseg[root].sum(0, -depth[top_dsu[root]] + depth[a])), a = parent[top_dsu[root]];
             }
@@ -318,6 +334,7 @@ signed main()
             int mxb = values[lca];
             while (b != lca)
             {
+                // logic is same as case of a
                 int root = heavy.find(b);
                 int sz = heavy.getsize(root);
                 if (sz == 1)
@@ -329,6 +346,7 @@ signed main()
             }
             cout << max(mxa, mxb) << ' ';
         }
+        // replace node value
         else
         {
             int a, b;
@@ -336,6 +354,7 @@ signed main()
             values[a] = b;
             int root = heavy.find(a);
             int sz = heavy.getsize(root);
+            // if heavy component, replace in segment tree as well
             if (sz != 1)
                 heavyseg[root].replace(depth[a] - depth[top_dsu[root]], b);
         }
