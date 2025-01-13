@@ -94,3 +94,78 @@ signed main()
     decompose_tree(1);
     cout << ans << endl;
 }
+/*
+this one is even better but it speaks language of gods
+#include <cmath>
+#include <iostream>
+#include <algorithm>
+#include <vector>
+#include <unordered_map>
+#include <string>
+#include <queue>
+#include <set>
+#include <unordered_set>
+using namespace std;
+// preprocessing to make code easier
+#define int long long
+template <typename T>
+using v = vector<T>;
+#define N 200001
+v<int> adj[N];
+int n, k1, k2;
+long long ans;
+// suf[i] -> sum of nodes having depth in range [i, inf)
+int suf(deque<int> &suf, int idx)
+{
+    if (idx < 0)
+        return suf[0];
+    if (idx >= suf.size())
+        return 0;
+    return suf[idx];
+}
+// answer calculation is hard to understand but you will get it!
+void mergeSuffixes(deque<int> &sa, deque<int> &sb)
+{
+    if (sa.size() < sb.size())
+        swap(sa, sb);
+    for (int i = 0; i < sb.size(); i++)
+        ans += 1LL * (suf(sb, i) - suf(sb, i + 1)) * (suf(sa, k1 - i) - suf(sa, k2 - i + 1));
+    for (int i = 0; i < sb.size(); i++)
+        sa[i] += sb[i];
+}
+
+deque<int> dfs(int u, int p)
+{
+    deque<int> suf_parent{1};
+    for (int v : adj[u])
+        if (v != p)
+        {
+            deque<int> suf_child = dfs(v, u);
+            // depth of child[0] should correspond to parent[1]
+            suf_child.push_front(suf_child.front());
+            mergeSuffixes(suf_parent, suf_child);
+        }
+    return suf_parent;
+}
+
+signed main()
+{
+#ifdef LOCAL
+    freopen("input.txt", "r", stdin);
+    // freopen("output.txt", "w", stdout);
+#else
+    ios::sync_with_stdio(0), cin.tie(0), cout.tie(0);
+#endif
+    cin >> n >> k1 >> k2;
+    for (int i = 1; i < n; i++)
+    {
+        int x, y;
+        cin >> x >> y;
+        adj[x].push_back(y);
+        adj[y].push_back(x);
+    }
+    dfs(1, -1);
+    cout << ans << endl;
+    return 0;
+}
+*/
